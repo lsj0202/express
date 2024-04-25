@@ -1,37 +1,26 @@
 const express = require("express");
+const usersController = require("./controllers/users.controller");
+const postsController = require("./controllers/posts.controller");
 
 const PORT = 8080;
 
 const app = express();
+app.use(express.json()); // body parser 설정
 
-const Users = [
-  {
-    id: 0,
-    name: "John",
-  },
-  {
-    id: 1,
-    name: "Lsj",
-  },
-];
-
-app.get("/", (req, res) => {
-  res.send("Hello, World!!");
+app.use((req, res, next) => {
+  // 미들웨어 설정
+  const start = Date.now();
+  console.log(`${req.method} ${req.url}`);
+  next();
+  const diffTime = Date.now() - start;
+  console.log(`end: ${req.method} ${req.url} ${diffTime}ms`);
 });
 
-app.get("/users/:id", (req, res) => {
-  const userId = req.params.id;
-  const user = Users[userId];
-  if (user) {
-    res.send(user);
-  } else {
-    res.sendStatus(404);
-  }
-});
+app.get("/users", usersController.getUsers);
+app.get("/users/:id", usersController.getUser);
+app.post("/users", usersController.postUser);
 
-app.get("/users", (req, res) => {
-  res.send(Users);
-});
+app.get("/posts", postsController.getPost);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
