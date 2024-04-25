@@ -1,6 +1,6 @@
 const express = require("express");
-const usersController = require("./controllers/users.controller");
-const postsController = require("./controllers/posts.controller");
+const postsRouter = require("./routes/posts.router");
+const usersRouter = require("./routes/users.router");
 
 const PORT = 8080;
 
@@ -13,14 +13,11 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
   const diffTime = Date.now() - start;
-  console.log(`end: ${req.method} ${req.url} ${diffTime}ms`);
+  console.log(`end: ${req.method} ${req.baseUrl} ${diffTime}ms`);
 });
 
-app.get("/users", usersController.getUsers);
-app.get("/users/:id", usersController.getUser);
-app.post("/users", usersController.postUser);
-
-app.get("/posts", postsController.getPost);
+app.use("/users", usersRouter);
+app.use("/posts", postsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
